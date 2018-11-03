@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,0BAA2B;EACvB,UAAU,EAAE,KAAK",
+"sources": ["confirmation-dialog.component.scss"],
+"names": [],
+"file": "confirmation-dialog.component.css"
+}

@@ -1,84 +1,79 @@
-import {Component, OnInit} from '@angular/core';
-import {AngularFireDatabase} from 'angularfire2/database';
-import {Article} from '../model';
-import {snapshotToArray} from '../utils/firebase-utils';
-import {environment} from '../../environments/environment';
-import {DataSnapshot} from 'angularfire2/database/interfaces';
+import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Article, Category} from '../model';
+import {ArticleService} from '../services/article.service';
+import {Subscription} from 'rxjs';
+import {HebrewDateService} from '../services/hebrew-date.service';
+import {Router} from '@angular/router';
+import {CategoryService} from '../services/category.service';
+
+const SEARCH_ON_ARTICLE_CONTENT_KEY = 'search_on_article_content_key';
 
 @Component({
     selector: 'app-articles-page',
-    templateUrl: './songs-page.component.html',
-    styleUrls: ['./songs-page.component.scss']
+    templateUrl: './articles-page.component.html',
+    styleUrls: ['./articles-page.component.scss']
 })
-export class ArticlesPageComponent implements OnInit {
+export class ArticlesPageComponent implements OnInit, OnDestroy {
 
-    public currentSongs: Article[];
-    public currentPage = 0;
-    public hasMoreSongs: boolean;
-    public loading: boolean;
+    public allArticles: Article[];
+    public articles: Article[];
+    public categories: Category[];
     public searchText: string;
+    public subscription: Subscription;
+    public searchOnArticleContent: boolean;
 
-    private nextStartAtSong: string;
-    private previousEndAtSong: string;
+    constructor(private articleService: ArticleService,
+                private categoryService: CategoryService,
+                private hebrewDateService: HebrewDateService,
+                private ngZone: NgZone,
+                private router: Router) {
 
-    constructor(private database: AngularFireDatabase) {
-    }
-
-    public get previousSongsCount(): number {
-        return this.currentPage * environment.pageSize;
+        this.searchOnArticleContent = localStorage.getItem(SEARCH_ON_ARTICLE_CONTENT_KEY) === 'true';
     }
 
     public ngOnInit(): void {
-        this.loadSongs();
+        this.initCategories();
+        this.initArticles();
+    }
+
+    public navigate(commands: any[]): void {
+        this.ngZone.run(() => this.router.navigate(commands)).then();
+    }
+
+    public ngOnDestroy(): void {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 
     public onSearchTextChange(): void {
-        this.currentPage = 0;
-        this.previousEndAtSong = null;
-        this.nextStartAtSong = this.searchText;
-        this.loadSongs();
+        const fixedSearchText = this.searchText.toLowerCase();
+        this.articles = this.allArticles.filter(article =>
+            article.title.toLowerCase().includes(fixedSearchText) ||
+            (this.searchOnArticleContent && article.sections.some(section =>
+                (section.header && section.header.toLowerCase().includes(fixedSearchText)) ||
+                section.content.toLowerCase().includes(fixedSearchText))));
     }
 
-    public onChangePage(pageIndex: number): void {
-        if (pageIndex > this.currentPage) {
-            this.previousEndAtSong = null;
-        } else {
-            this.nextStartAtSong = null;
-        }
-        this.currentPage = pageIndex;
-        this.loadSongs();
+    public onSearchTypeChange(): void {
+        localStorage.setItem(SEARCH_ON_ARTICLE_CONTENT_KEY, this.searchOnArticleContent.toString());
     }
 
-    private loadSongs(): void {
-        this.loading = true;
-        let query = this.database.list('/songs').query.orderByChild('name');
-        if (this.nextStartAtSong) {
-            query = query.startAt(this.nextStartAtSong).limitToFirst(environment.pageSize + 1);
+    private initCategories(): void {
+        const subscription = this.categoryService.getCategories().subscribe(categories => {
+            this.categories = categories;
+            subscription.unsubscribe();
+        });
+    }
+
+    private initArticles() {
+        this.subscription = this.articleService.getArticles().subscribe(articles => {
+            this.allArticles = articles;
             if (this.searchText) {
-                query = query.endAt(this.searchText + '\uf8ff');
+                this.onSearchTextChange();
+            } else {
+                this.articles = articles;
             }
-        } else if (this.previousEndAtSong) {
-            query = query.endAt(this.previousEndAtSong).limitToLast(environment.pageSize + 1);
-        } else {
-            query = query.limitToFirst(environment.pageSize + 1);
-        }
-        query.once('value').then(this.onValueFetched.bind(this, this.searchText));
-    }
-
-    private onValueFetched(previousSearchText: string, snapshot: DataSnapshot): void {
-        if (previousSearchText === this.searchText) {
-            this.currentSongs = snapshotToArray(snapshot);
-            if (this.currentSongs.length > 0) {
-                this.previousEndAtSong = this.currentSongs[0].name;
-                if (this.currentSongs.length > environment.pageSize) {
-                    this.nextStartAtSong = this.currentSongs[environment.pageSize].name;
-                    this.currentSongs = this.currentSongs.slice(0, environment.pageSize);
-                    this.hasMoreSongs = true;
-                } else {
-                    this.hasMoreSongs = false;
-                }
-            }
-            this.loading = false;
-        }
+        });
     }
 }

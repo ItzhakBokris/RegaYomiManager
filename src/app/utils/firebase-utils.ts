@@ -1,4 +1,4 @@
-import {DataSnapshot} from 'angularfire2/database/interfaces';
+import {DataSnapshot} from '@angular/fire/database/interfaces';
 
 export const snapshotToObject = <T>(snapshot: DataSnapshot): T => ({...snapshot.val(), key: snapshot.key});
 

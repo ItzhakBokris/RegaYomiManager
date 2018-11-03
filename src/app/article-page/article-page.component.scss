@@ -1,32 +1,74 @@
-.images-container {
-    display: flex;
+form {
+    text-align: right;
 
-    .thumbnail-container {
-        margin-right: 10px;
-        cursor: pointer;
+    label:not(:first-child) {
+        margin-top: 1rem;
+    }
+}
 
-        &.selected {
-            box-shadow: 0 0 0 2px #007aff;
+select {
+    color: #868e96;
+
+    option[disabled] {
+        display: none;
+    }
+
+    &.ng-valid {
+        color: #495057;
+    }
+}
+
+.date-container {
+    position: relative;
+
+    input {
+        color: transparent;
+        padding-right: 45px;
+    }
+
+    mat-datepicker-toggle > /deep/ button {
+        margin-top: -39px;
+        position: absolute;
+        outline: none;
+    }
+
+    .hebrew-date {
+        right: 0;
+        top: 0;
+        position: absolute;
+        padding-right: 45px;
+        line-height: 38px;
+        left: 0;
+        background-color: transparent;
+        color: #495057;
+    }
+}
+
+.section-list {
+    padding-bottom: 20px;
+
+    .section-container {
+        position: relative;
+        border: 1px solid lightgray;
+        background: #efefef;
+        padding: 20px 50px;
+        margin-top: 20px;
+
+        .btn-delete-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 0;
         }
     }
 
-    .add-image-button {
-        color: gainsboro;
-        font-size: 30px;
-
-        .plus-sign {
-            position: absolute;
-        }
-
-        .loader {
-            margin-right: -100%;
-        }
-
-        &.disabled {
-            cursor: auto;
-            background-color: lightgray;
-            border: none;
-            color: darkgray;
-        }
+    .btn-add-section {
+        width: 100%;
+        border-radius: 0;
+        color: #28a745;
+        font-weight: bold;
+        border: 1px solid lightgray;
+        background: #efefef;
+        margin-top: 5px;
     }
 }

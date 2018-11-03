@@ -1,83 +1,98 @@
-<div *ngIf="isLoading" class="loader-container">
+<div *ngIf="!article" class="loader-container">
     <div class="loader"></div>
 </div>
 
-<form *ngIf="!isLoading" #songForm="ngForm">
-    <div class="form-group">
-        <label for="songName">Song name</label>
-        <input class="form-control"
-               id="songName"
-               name="songName"
-               #songName="ngModel"
-               [class.is-valid]="toShowValid(songName)"
-               [class.is-invalid]="toShowInvalid(songName)"
-               placeholder="Enter song name"
-               [dir]="isRtl(song.name) ? 'rtl' : 'ltr'"
-               [(ngModel)]="song.name"
+<form *ngIf="article" [formGroup]="form" dir="rtl">
+    <label for="title">כותרת</label>
+    <input id="title"
+           formControlName="title"
+           class="form-control"
+           [class.is-valid]="toShowValid('title')"
+           [class.is-invalid]="toShowInvalid('title')"
+           placeholder="הכנס כותרת"
+           required/>
+    <div *ngIf="toShowInvalid('title')" class="invalid-feedback">הכנס כותרת בבקשה.</div>
+
+    <label for="category">קטגוריה</label>
+    <select id="category"
+            formControlName="category"
+            class="form-control"
+            matNativeControl
+            required>
+        <option value="" disabled selected>הכנס קטגוריה</option>
+        <option *ngFor="let category of categories" [value]="category.key">{{category.name}}</option>
+    </select>
+    <div *ngIf="toShowInvalid('category')" class="invalid-feedback">הכנס קטגוריה בבקשה.</div>
+
+    <label for="topic">נושא</label>
+    <input id="topic"
+           formControlName="topic"
+           class="form-control"
+           placeholder="הכנס נושא"
+           [class.is-valid]="toShowValid('topic')"
+           [class.is-invalid]="toShowInvalid('topic')"
+           [matAutocomplete]="autocomplete"
+           required/>
+    <mat-autocomplete #autocomplete>
+        <mat-option *ngFor="let topic of filteredTopics" [value]="topic.name">{{topic.name}}</mat-option>
+    </mat-autocomplete>
+    <div *ngIf="toShowInvalid('topic')" class="invalid-feedback">הכנס נושא בבקשה.</div>
+
+    <label for="date">תאריך</label>
+    <div class="date-container">
+        <input id="date"
+               formControlName="date"
+               class="form-control"
+               placeholder="הכנס תאריך"
+               [class.is-valid]="toShowValid('date')"
+               [class.is-invalid]="toShowInvalid('date')"
+               matInput
+               [matDatepicker]="datepicker"
+               [matDatepickerFilter]="dateFilter"
                required/>
 
-        <div *ngIf="toShowInvalid(songName)" class="invalid-feedback">Please provide a song name.</div>
+        <span class="hebrew-date">{{article.hebrewDate}}</span>
+        <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+        <mat-datepicker #datepicker disabled="false"></mat-datepicker>
     </div>
+    <div *ngIf="toShowInvalid('date')" class="invalid-feedback">הכנס תאריך בבקשה.</div>
 
-    <div class="form-group">
-        <label for="artistName">Artist</label>
-        <input class="form-control"
-               id="artistName"
-               name="artistName"
-               #artistName="ngModel"
-               [class.is-valid]="toShowValid(artistName)"
-               [class.is-invalid]="toShowInvalid(artistName)"
-               placeholder="Enter artist name"
-               required
-               [dir]="isRtl(song.artist) ? 'rtl' : 'ltr'"
-               [(ngModel)]="song.artist"
-               (ngModelChange)="onArtistChange()"/>
+    <div formArrayName="sections" class="section-list">
+        <div *ngFor="let formGroup of form.controls['sections'].controls; let index = index"
+             class="section-container"
+             [formGroup]="formGroup">
 
-        <div *ngIf="toShowInvalid(artistName)" class="invalid-feedback">Please provide an artist name.</div>
-    </div>
+            <label for="header">כותרת משנה</label>
+            <input id="header"
+                   class="form-control"
+                   formControlName="header"
+                   placeholder="הכנס כותרת משנה"/>
 
-    <div class="form-group">
-        <label>Select Image</label>
-        <div class="images-container">
-            <ng-container *ngIf="!isArtistInvalid">
-                <span *ngFor="let image of artist.images"
-                      class="thumbnail-container"
-                      [class.selected]="song.image === image"
-                      (click)="selectImage(image)">
+            <label for="content">תוכן</label>
+            <textarea
+                class="form-control"
+                id="content"
+                formControlName="content"
+                [class.is-valid]="toShowValid('content', formGroup)"
+                [class.is-invalid]="toShowInvalid('content', formGroup)"
+                dir="rtl"
+                placeholder="הכנס תוכן"
+                rows="10"
+                required
+                minlength="20"></textarea>
+            <div *ngIf="toShowInvalid('content', formGroup)" class="invalid-feedback">
+                הכנס בבקשה טקסט באורך של לפחות 20 תווים.
+            </div>
 
-                    <img [src]="image" alt="Artist Image"/>
-                </span>
-            </ng-container>
+            <label for="source">מקור</label>
+            <input class="form-control"
+                   id="source"
+                   formControlName="source"
+                   placeholder="הכנס מקור"/>
 
-            <span *ngIf="showUploadArtistImageButton"
-                  class="add-image-button thumbnail-container"
-                  [class.disabled]="isArtistInvalid">
-
-                <span *ngIf="!isUploading" class="plus-sign">+</span>
-                <span *ngIf="isUploading" class="loader"></span>
-                <input type="file" [disabled]="isArtistInvalid || isUploading" (change)="addImage($event)">
-            </span>
+            <button class="btn btn-danger btn-delete-section" (click)="deleteSection(index)">מחק</button>
         </div>
-    </div>
-
-    <div class="form-group">
-        <label for="lyricsText">Lyrics</label>
-        <textarea class="form-control"
-                  id="lyricsText"
-                  name="lyricsText"
-                  #lyricsText="ngModel"
-                  [class.is-valid]="toShowValid(lyricsText)"
-                  [class.is-invalid]="toShowInvalid(lyricsText)"
-                  [dir]="isRtl(lyrics.text) ? 'rtl' : 'ltr'"
-                  [(ngModel)]="lyrics.text"
-                  placeholder="Enter lyrics"
-                  rows="16"
-                  required
-                  minlength="20"></textarea>
-
-        <div *ngIf="toShowInvalid(lyricsText)" class="invalid-feedback">
-            Please provide a song lyrics with at least 20 characters long.
-        </div>
+        <button class="btn btn-add-section" (click)="addSection()">+ הוסף קטע</button>
     </div>
 
     <div *ngIf="successMessage" class="alert alert-success" role="alert">{{successMessage}}</div>
@@ -85,22 +100,16 @@
     <div *ngIf="errorMessage" class="alert alert-danger" role="alert">{{errorMessage}}</div>
 
     <div class="form-group form-row">
-        <div *ngIf="!isNewSong" class="col-auto">
-            <button class="btn btn-primary" [disabled]="isUpdating" (click)="save(songForm)">Save</button>
+        <div *ngIf="!isNewArticle" class="col-auto">
+            <button class="btn btn-primary" [disabled]="isUpdating" (click)="save()">שמור</button>
         </div>
 
-        <div *ngIf="!isNewSong" class="col-auto">
-            <button class="btn btn-danger" [disabled]="isUpdating" (click)="delete()">Delete</button>
+        <div *ngIf="!isNewArticle" class="col-auto">
+            <button class="btn btn-danger" [disabled]="isUpdating" (click)="delete()">מחק</button>
         </div>
 
-        <div *ngIf="isNewSong" class="col-auto">
-            <button class="btn btn-primary" [disabled]="isUpdating" (click)="submit(songForm)">Submit</button>
-        </div>
-
-        <div *ngIf="isNewSong" class="col-auto">
-            <button class="btn btn-primary" [disabled]="isUpdating" (click)="openFetchSongDialog()">
-                Fetch From Site Content
-            </button>
+        <div *ngIf="isNewArticle" class="col-auto">
+            <button class="btn btn-primary" [disabled]="isUpdating" (click)="submit()">שלח</button>
         </div>
     </div>
 </form>

@@ -1,46 +1,26 @@
-export interface Song {
+export interface Article {
+    key?: string;
+    title: string;
+    category: string;
+    topic: string;
+    date: number;
+    lastModifiedDate: number;
+    hebrewDate: string;
+    sections: ArticleSection[];
+}
+
+export interface ArticleSection {
+    header?: string;
+    content: string;
+    source?: string;
+}
+
+export interface Category {
     key?: string;
     name: string;
-    artist: string;
-    viewsCount?: number;
-    likesCount?: number;
-    lyrics?: string;
-    image?: string;
-    creationDate?: string;
-    lastModifiedDate?: string;
 }
 
-export interface Lyrics {
-    key?: string;
-    text: string;
-}
-
-export interface Artist {
+export interface Topic {
     key?: string;
     name: string;
-    images: string[];
-}
-
-export interface Group {
-    key?: string;
-    name: string;
-    admin: string;
-    pinCode: string;
-    items: GroupSong[];
-    members: string[];
-}
-
-export interface GroupSong {
-    member: string;
-    song: string;
-}
-
-export interface Rating {
-    key: string;
-    rating?: number;
-    feedback?: string;
-    nickname: string;
-    creationDate: string;
-    os: string;
-    version: string;
 }
