@@ -2,6 +2,16 @@
     <div class="loader"></div>
 </div>
 
+<div *ngIf="article" class="simulator-container" dir="rtl">
+    <p class="simulator-title">{{article.title}}</p>
+    <p class="simulator-date">{{article.hebrewDate}}</p>
+    <div *ngFor="let section of article.sections" class="simulator-section">
+        <p *ngIf="section.header" class="simulator-section-header">{{section.header}}</p>
+        <p class="simulator-section-content">{{section.content}}</p>
+        <p *ngIf="section.source" class="simulator-section-source">{{section.source}}</p>
+    </div>
+</div>
+
 <form *ngIf="article" [formGroup]="form" dir="rtl">
     <label for="title">כותרת</label>
     <input id="title"

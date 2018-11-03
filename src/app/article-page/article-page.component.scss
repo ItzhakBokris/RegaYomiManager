@@ -1,5 +1,11 @@
+$simulator-width: 30vw;
+$simulator-height: 1.8 * $simulator-width;
+$max-simulator-height: calc(#{100vh} - #{100px});
+
 form {
     text-align: right;
+    margin-left: 30px;
+    padding-left: $simulator-width;
 
     label:not(:first-child) {
         margin-top: 1rem;
@@ -70,5 +76,53 @@ select {
         border: 1px solid lightgray;
         background: #efefef;
         margin-top: 5px;
+    }
+}
+
+.simulator-container {
+    border: 1px solid gray;
+    position: fixed;
+    overflow: auto;
+    width: $simulator-width;
+    height: $simulator-height;
+    max-height: $max-simulator-height;
+    text-align: right;
+    font-family: sans-serif;
+    padding: 1em;
+
+    .simulator-title {
+        color: black;
+        font-weight: bold;
+        font-size: 1.5em;
+        line-height: 1.3em;
+    }
+
+    .simulator-date {
+        margin-top: -0.8em;
+        font-size: 0.8em;
+        color: gray;
+    }
+
+    .simulator-section {
+        padding-top: 1em;
+
+        .simulator-section-header {
+            color: black;
+            font-weight: bold;
+            margin-bottom: 0;
+            font-size: 1.2em;
+        }
+
+        .simulator-section-content {
+            color: #444444;
+            font-size: 1.2em;
+            white-space: pre-line;
+        }
+
+        .simulator-section-source {
+            margin-top: -0.8em;
+            color: gray;
+            font-size: 0.8em;
+        }
     }
 }

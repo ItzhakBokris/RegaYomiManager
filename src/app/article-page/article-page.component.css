@@ -1,5 +1,7 @@
 form {
-  text-align: right; }
+  text-align: right;
+  margin-left: 30px;
+  padding-left: 30vw; }
   form label:not(:first-child) {
     margin-top: 1rem; }
 
@@ -50,5 +52,40 @@ select {
     border: 1px solid lightgray;
     background: #efefef;
     margin-top: 5px; }
+
+.simulator-container {
+  border: 1px solid gray;
+  position: fixed;
+  overflow: auto;
+  width: 30vw;
+  height: 54vw;
+  max-height: calc(100vh - 100px);
+  text-align: right;
+  font-family: sans-serif;
+  padding: 1em; }
+  .simulator-container .simulator-title {
+    color: black;
+    font-weight: bold;
+    font-size: 1.5em;
+    line-height: 1.3em; }
+  .simulator-container .simulator-date {
+    margin-top: -0.8em;
+    font-size: 0.8em;
+    color: gray; }
+  .simulator-container .simulator-section {
+    padding-top: 1em; }
+    .simulator-container .simulator-section .simulator-section-header {
+      color: black;
+      font-weight: bold;
+      margin-bottom: 0;
+      font-size: 1.2em; }
+    .simulator-container .simulator-section .simulator-section-content {
+      color: #444444;
+      font-size: 1.2em;
+      white-space: pre-line; }
+    .simulator-container .simulator-section .simulator-section-source {
+      margin-top: -0.8em;
+      color: gray;
+      font-size: 0.8em; }
 
 /*# sourceMappingURL=article-page.component.css.map */
