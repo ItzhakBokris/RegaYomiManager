@@ -1,6 +1,5 @@
-$simulator-width: 30vw;
+$simulator-width: 25vw;
 $simulator-height: 1.8 * $simulator-width;
-$max-simulator-height: calc(#{100vh} - #{100px});
 
 form {
     text-align: right;
@@ -85,44 +84,43 @@ select {
     overflow: auto;
     width: $simulator-width;
     height: $simulator-height;
-    max-height: $max-simulator-height;
     text-align: right;
     font-family: sans-serif;
-    padding: 1em;
+    padding: 1.33vw;
 
     .simulator-title {
         color: black;
         font-weight: bold;
-        font-size: 1.5em;
-        line-height: 1.3em;
+        font-size: 1.67vw;
+        line-height: 2.167vw;
     }
 
     .simulator-date {
-        margin-top: -0.8em;
-        font-size: 0.8em;
+        font-size: 0.875vw;
+        margin-top: -0.833vw;
         color: gray;
     }
 
     .simulator-section {
-        padding-top: 1em;
+        padding-top: 1.33vw;
 
         .simulator-section-header {
             color: black;
             font-weight: bold;
             margin-bottom: 0;
-            font-size: 1.2em;
+            font-size: 1.33vw;
         }
 
         .simulator-section-content {
             color: #444444;
-            font-size: 1.2em;
+            font-size: 1.33vw;
             white-space: pre-line;
         }
 
         .simulator-section-source {
-            margin-top: -0.8em;
             color: gray;
-            font-size: 0.8em;
+            font-size: 0.875vw;
+            margin-top: -0.83vw;
         }
     }
 }
