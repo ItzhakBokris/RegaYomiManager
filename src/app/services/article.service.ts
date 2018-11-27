@@ -1,7 +1,7 @@
 import {Injectable, NgZone} from '@angular/core';
-import {Article} from '../model';
+import {Article, ArticleSection} from '../model';
 import {snapshotToArray} from '../utils/firebase-utils';
-import {AngularFireDatabase} from '@angular/fire/database';
+import {AngularFireDatabase, AngularFireList} from '@angular/fire/database';
 import {Observable, Subject, Subscriber} from 'rxjs';
 import {HebrewDateService} from './hebrew-date.service';
 
@@ -21,7 +21,7 @@ export class ArticleService {
             .list('/articles').query
             .orderByChild('date')
             .on('value', snapshot => {
-                this.articles = snapshotToArray(snapshot).reverse();
+                this.articles = snapshotToArray(snapshot).filter(article => article.isActive).reverse();
                 this.articleMap = new Map<string, Article>();
                 this.articles.map(article => this.articleMap.set(article.key, article));
                 this.updateTakenDates();

@@ -74,7 +74,8 @@ export class ArticlePageComponent implements OnInit, OnDestroy {
                 date: null,
                 lastModifiedDate: 0,
                 hebrewDate: '',
-                sections: [{header: '', content: '', source: ''}]
+                sections: [{header: '', content: '', source: ''}],
+                isActive: true
             };
             this.createSectionFormGroups();
         }
@@ -120,11 +121,15 @@ export class ArticlePageComponent implements OnInit, OnDestroy {
         const modalRef = this.modalService.open(ConfirmationDialogComponent);
         modalRef.componentInstance.title = 'מחיקת מאמר';
         modalRef.componentInstance.content = 'האם אתה בטוח שברצונך למחוק את המאמר?';
-        modalRef.result.then(value => value &&
-            this.articleService.deleteArticle(this.article).then(() => {
-                window.close();
-                setTimeout(() => this.router.navigate(['/']));
-            }).catch(() => this.errorMessage = GENERIC_ERROR_MESSAGE));
+        modalRef.result.then(value => {
+            if (value) {
+                this.article.isActive = false;
+                this.articleService.updateArticle(this.article).then(() => {
+                    window.close();
+                    setTimeout(() => this.router.navigate(['/']));
+                }).catch(() => this.errorMessage = GENERIC_ERROR_MESSAGE);
+            }
+        });
     }
 
     public deleteSection(sectionIndex: number): void {

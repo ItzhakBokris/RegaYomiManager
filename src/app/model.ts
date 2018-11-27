@@ -7,6 +7,7 @@ export interface Article {
     lastModifiedDate: number;
     hebrewDate: string;
     sections: ArticleSection[];
+    isActive: boolean;
 }
 
 export interface ArticleSection {
