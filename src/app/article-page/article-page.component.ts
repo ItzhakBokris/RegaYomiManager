@@ -63,7 +63,7 @@ export class ArticlePageComponent implements OnInit, OnDestroy {
     public initArticle(): void {
         if (this.articleKey) {
             this.articlesSubscription = this.articleService.getArticle(this.articleKey).subscribe(article => {
-                this.article = {...article};
+                this.article = {...article, sections: article.sections.map(section => ({...section}))};
                 this.createSectionFormGroups();
             });
         } else {
